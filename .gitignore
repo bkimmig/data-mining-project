@@ -1,3 +1,18 @@
+# Project gitignore items
+
+# ignore the large data files, allow zip files
+data/movie_metadata.csv
+data/movie_metadata.json
+
+# ignore latex outputs
+*.aux
+*.out
+
+
+
+#--------------------------
+# standard gitignore for python
+
 # Byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
