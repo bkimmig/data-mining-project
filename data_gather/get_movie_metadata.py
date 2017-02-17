@@ -23,13 +23,18 @@ for i in range(len(movie_data)):
     ## use the IMDB ID to search
     imdb_id = movie_data['movie_imdb_link'][i].split('/')[4]
     r = requests.get(OMDB_API_URL.format(imdb_id))
-    mdata = r.json()
+    try:
+        mdata = r.json()
+    except:
+        continue
     d = {
         'plot': mdata['Plot'],
         'title': mdata['Title'],
         'genres': mdata['Genre']
     }
     synopses.append(d)
+    if i%500 == 0:
+        print(i)
 
 
 data = {

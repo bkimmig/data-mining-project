@@ -11,7 +11,8 @@
 \maketitle
 
 \section{How you obtained your data?}
-How you obtained your data?
+
+We obtained the base of our data from a dataset published on \href{https://www.kaggle.com/deepmatrix/imdb-5000-movie-dataset}{Kaggle}. The dataset contained information on $\sim5000$ movies. We essentially used this dataset for the movie list and the IMDB IDs. From the IMDB IDs we were able to perform requests to the  \href{https://www.omdbapi.com/}{OMDB API} where we compiled the title, plot summary, and genres for all 5000 movies. From there we stored them in a JSON file, with each entry containing the fields ['title', 'plot', 'genres'].
 
 \section{Data Size}
 How large is your data?
