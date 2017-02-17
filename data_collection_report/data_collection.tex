@@ -15,10 +15,10 @@
 We obtained the base of our data from a dataset published on \href{https://www.kaggle.com/deepmatrix/imdb-5000-movie-dataset}{Kaggle}. The dataset contained information on $\sim5000$ movies. We essentially used this dataset for the movie list and the IMDB IDs. From the IMDB IDs we were able to perform requests to the  \href{https://www.omdbapi.com/}{OMDB API} where we compiled the title, plot summary, and genres for all 5000 movies. From there we stored them in a JSON file, with each entry containing the fields ['title', 'plot', 'genres'].
 
 \section{Data Size}
-How large is your data?
+The general JSON data file is about 2.3 MB. This is just the data for the start, we very well may need/want to add movies to our data set. This is the raw data, we will processing the data to create features that can then be used for classification. Creating the features and comparing classification is the main part of this project.
 
 \section{Format/Storage}
-In what format are you storing your data. Describe the abstract data type, not just the file format.
+We are currently storing our data in a JSON file. It contains an entry for each movie and within each entry we have 3 descriptors of the movie -- title, plot and genres. Once we process and extract features from the text we will most likely store the tables in HDF5 format for easy reading into Pandas data frames.
 
 \section{Processing}
 Did you need to process the original data to get it into an easier, more compressed format (e.g., convert from one format to another one)?
