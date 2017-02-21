@@ -10,18 +10,23 @@
 
 \maketitle
 
-\section{How you obtained your data?}
+% \section{How you obtained your data?}
 
-We obtained the base of our data from a dataset published on \href{https://www.kaggle.com/deepmatrix/imdb-5000-movie-dataset}{Kaggle}. The dataset contained information on $\sim5000$ movies. We essentially used this dataset for the movie list and the IMDB IDs. From the IMDB IDs we were able to perform requests to the  \href{https://www.omdbapi.com/}{OMDB API} where we compiled the title, plot summary, and genres for all 5000 movies. From there we stored them in a JSON file, with each entry containing the fields ['title', 'plot', 'genres'].
+We obtained the base of our data from a dataset published on \href{https://www.kaggle.com/deepmatrix/imdb-5000-movie-dataset}{Kaggle}. The dataset contained information on $\sim5000$ movies. We essentially used this dataset for the movie list and the IMDB IDs. From the IMDB IDs we were able to perform requests to the \href{https://www.omdbapi.com/}{OMDB API} where we compiled the title, plot summary, and genres for all $\sim5000$ movies. From there we stored them in a JSON file, with each entry containing the fields ['title', 'plot', 'genres']. We may need/want to add more movies to this data set as our analysis progresses.
 
-\section{Data Size}
-The general JSON data file is about 2.3 MB. This is just the data for the start, we very well may need/want to add movies to our data set. This is the raw data, we will processing the data to create features that can then be used for classification. Creating the features is a main chunk of the project, but I'd imagine that our matrices will be fairly large in size as they will have as many columns as we have movies ($\sim5000$), and depending on our $k$-gram method will most likely have a very large number of rows as well. (We should be able to handle these is a sparse format.) 
+% \section{Data Size}
+% The general JSON data file is about 2.3 MB. This is the raw data, we will processing the data to create features that can then be used for classification. Creating the features is a main chunk of the project, but I'd imagine that our matrices will be fairly large in size as they will have as many columns as we have movies ($\sim5000$), and depending on our $k$-gram method will most likely have a very large number of rows as well. (As a first pass, using the TFIDF vecotorizor from sklearn we have about 25,000 rows for the $\sim5000$ movies represented in sparse matrix form)
 
-\section{Format/Storage}
-We are currently storing our data in a JSON file. It contains an entry for each movie and within each entry we have 3 descriptors of the movie -- title, plot and genres -- essentially giving the file 3 columns. The processing of this data will be a major part of this project, but in general we will always represent the data with matrices. Most likely these will be sparse matrices, due to the large number of paragraphs we will be processing.
+The general JSON data file is about 2.3 MB. This is the raw data, we will be processing the data to create features that can then be used for classification. Creating the features is a main chunk of the project, but with as many film synopses as we have ($\sim5000$) we expect our feature matrices to be large. The size of the data will be largely dependent on our $k$-gram methods - obviously some will produce more rows than others. As a first pass we used the TFIDF vectorizor in sklearn and broke it on words, giving us a matrix that is about ($\sim25000$) rows by ($\sim5000$) columns, in sparse form, where rows represent the word and the column represents the movie. For the genres of the movies, we will use a one-hot encoding.
 
-\section{Processing}
-As mentioned above, a large portion of our project is the processing of this data. We will be extracting features from the columns 'plot' and 'genre'. The plot features will give us information with which to classify the genre. Both of these items will be represented in matrix form, most likely with sparse matrices. We aim to test a number of processing methods within the $k$-gram universe, from single words to combinations of words. Most of our matrices will be represented using one-hot encoding. The processing of this data will come as part of our 'intermediate report'. 
+
+% \section{Format/Storage}
+We are currently storing our data in a JSON file. It contains an entry for each movie and within each entry we have 3 descriptors of the movie -- title, plot and genres -- essentially giving the file 3 columns. As processing continues we will store the feature matrices we create in separate files, assuming they are not quick to compute. We will create matrices from both the plot ($k$-gram matrices), and the genres. The genre matrix will be a one-hot encoding of the genres and can be constant for every $k$-gram matrix unless we decide to limit and/or change the genres.
+
+% \section{Processing}
+% As mentioned above, a large portion of our project is the processing of this data. We will be extracting features from the columns 'plot' and 'genre'. The plot features will give us information with which to classify the genre. Both of these items will be represented in matrix form, most likely with sparse matrices. 
+
+We aim to test a number of processing methods within the $k$-gram universe, from single words to combinations of words. Most of our matrices will be represented using one-hot encoding. The processing of this data will come as part of our 'intermediate report'. We will also be looking into the TFIDF vectorizor in sklearn for comparison.
 
 \section{Simulating Similar Data}
 How would you simulate similar data?
