@@ -28,7 +28,6 @@ We are currently storing our data in a JSON file. It contains an entry for each 
 
 We aim to test a number of processing methods within the $k$-gram universe, from single words to combinations of words. Most of our matrices will be represented using one-hot encoding. The processing of this data will come as part of our 'intermediate report'. We will also be looking into the TFIDF vectorizor in sklearn for comparison.
 
-\section{Simulating Similar Data}
-How would you simulate similar data?
+One way to do this would be with Markov Chains. We build probability distributions over all of our words and subsequently the words that follow them. This would allow us to create a new document by selecting a word and sampling from the distribution of words that follow. However, in the case of this type of data it seems that this would be slightly unnecessary as there is an abundance of text we could just use for documents.
 
 \end{document}
