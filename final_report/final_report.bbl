@@ -1,9 +1,37 @@
 \begin{thebibliography}{1}
 
+\bibitem{blei2003}
+David~M Blei, Andrew~Y Ng, and Michael~I Jordan.
+\newblock Latent dirichlet allocation.
+\newblock {\em Journal of machine Learning research}, 3(Jan):993--1022, 2003.
+
+\bibitem{breiman2001}
+Leo Breiman.
+\newblock Random forests.
+\newblock {\em Machine Learning}, 45(1):5--32, 2001.
+
+\bibitem{kdnuggets:topic_model}
+IIIT-Hyderabad Goutam~Nair.
+\newblock Text mining 101: Topic modeling, 2016.
+\newblock
+  [\url{http://www.kdnuggets.com/2016/07/text-mining-101-topic-modeling.html}].
+
+\bibitem{scikit-learn}
+F.~Pedregosa, G.~Varoquaux, A.~Gramfort, V.~Michel, B.~Thirion, O.~Grisel,
+  M.~Blondel, P.~Prettenhofer, R.~Weiss, V.~Dubourg, J.~Vanderplas, A.~Passos,
+  D.~Cournapeau, M.~Brucher, M.~Perrot, and E.~Duchesnay.
+\newblock Scikit-learn: Machine learning in {P}ython.
+\newblock {\em Journal of Machine Learning Research}, 12:2825--2830, 2011.
+
 \bibitem{wiki:genres}
 Wikipedia.
 \newblock List of genres --- wikipedia{,} the free encyclopedia, 2017.
 \newblock [Avaliable at
   \url{https://en.wikipedia.org/w/index.php?title=List_of_genres&oldid=774783669}].
+
+\bibitem{wiki:topic_model}
+Wikipedia.
+\newblock Topic model --- wikipedia{,} the free encyclopedia, 2017.
+\newblock [\url{https://en.wikipedia.org/wiki/Topic_model}].
 
 \end{thebibliography}

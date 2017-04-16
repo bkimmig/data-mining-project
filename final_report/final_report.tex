@@ -4,7 +4,7 @@
 \usepackage{url}
 \usepackage{graphicx}
 
-\title{Classfying Movie Genres With Plot Summaries}
+\title{Classifying Movie Genres With Plot Summaries}
 \author{Brian Kimmig, Jesus Zarate}
 \date{}
 
@@ -16,16 +16,13 @@
 \section{Introduction}
 \label{sec:introduction}
 
-According to Wikipedia a "genre is the term for any category of literature or other forms of art or entertainment" \cite{wiki:genres}. 
+The internet today contains an abundance of information. We see a great deal of images, videos, and somewhat more common, text. It is common that people want to summarize a topic or the content of a chunk of text. This is a challenging problem for computers and machine learning (ML) algorithms as sentences and paragraphs are highly unstructured. A majority of ML algorithms require the data to be in a consistent form, from vectors to matrices. Furthermore, they require that the data is numerical. This poses the main problem for us, how do you meaningfully turn a sentence or paragraph into numerical data?
 
-Currently, being able to classify what content in language is a hot topic in data science. Something about sentiment analysis. We thought a good way to be introduced to this tool set that allow these analyses was to try and classify writing with pre-made and somewhat objective labels. 
+The goal of this project was to take text data, and assign it to a category (or categories). We could try to do this with Twitter data but the categorizing of Tweets can be largely subjective and was beyond the scope of this class. We decided that a good dataset to try these methods on would be film synopses and genres. In this case the the text describing a movie can vary greatly, but there is a consistent and widely agreed on genre categorization. This makes for a great dataset to help us see if we can categorize textual data. We aim to see if we can take the text of a film synopses, build meaningful features, and learn a model to categorize the genres of other movies based on their synopses. 
 
-Our first thought was to try to categorized some of the topics in twitter data, but this proved to be hard and not as objective as we would have been responsible for the original categories, which are easily more subjective. 
-
-Using this movie data gives us the opportunity to classify documents with 'correct' answers, allowing us to use a good number of techniques seen in the real world but have more clear cut answers and allow us to make sure that these tools can be used in this manner.
-
-The above may be the key idea?
-
+% TODO
+Building meaningful features from text sounds nice, but what does that actually mean? Go into other stuff here? What methods are we planning on using? Point to them below?
+ 
 \section{Data}
 \label{sec:data}
 
@@ -57,13 +54,16 @@ The genre labels set up with a one hot encoding. This was done to allow us to ea
 
 The synopses of the movies live in long strings or documents. We have a list of these that we will processing to create the features that we will then use to build models to classify genres. Extracting features from these documents is the main part of the project and will be discussed \S \ref{sec:methods}.
 
-\section{Key Idea}
-\label{sec:key_idea}
-
 \section{Methods and Results}
 \label{sec:methods}
 
-\subsection{Term Frequency - Inverse Document Frequency (TF-IDF)}
+In this section we will discuss the methods we used to create features for classification. We will start by creating features using Term Frequency - Inverse Document Frequency (TF-IDF), then with Latent Dirichlet Allocation \cite{blei2003}, and finally a combination of the two. 
+
+We will classify genres of movies with three different classifiers. The first will be a simple linear regression, as learned in class. The labels are binary for each genre, so some thresholding will be done to get labels using linear regression. Next, we will classify with logistic regression, which is a well known regression model for predicting binary labels. For both linear and logistic regression we will fit for each genre individually. The last classifier we use will be the random forest \cite{breiman2001}. We chose to use Random Forests due to their popularity in data science competitions and their multi label classification capabilities; we can classify all labels simultaneously. 
+
+For both the logistic regression, and random forest classifier we used the scikit-learn implementations \cite{scikit-learn}.
+
+\subsection{Term Frequency - Inverse Document Frequency}
 \label{sec:tfidf}
 
 \subsubsection{Linear Regression}
@@ -79,8 +79,12 @@ Classify one genre at a time.
 Classify all genres at once.
 
 
-\subsection{Latent Dirichlet Allocation (LDA)}
+\subsection{Latent Dirichlet Allocation}
 \label{sec:lda}
+
+Topic models are methods of taking large amounts of data and finding, understanding, and summarizing the information in it \cite{wiki:topic_model, kdnuggets:topic_model}. We believe that hidden in these plot summaries there will be some fairly obvious groups of words, or topics, that will be seen together. After some on-line research we came across the concept of Latent Dirichlet Allocation (LDA) \cite{blei2003}. LDA is a fairly popular topic model. 
+
+LDA essentially looks for topics in documents, determines some topics, and gives an estimate of the proportion of that topic that is seen in the document. The general idea that documents are random mixtures of topics, and topics are characterized by words \cite{blei2003}. 
 
 \subsubsection{Linear Regression}
 
