@@ -19,7 +19,8 @@ def remove_items(data, frequency_threshold=0.05):
     """
     
     unique_items, counts = np.unique(np.concatenate(data), return_counts=True)
-    freq= counts/np.sum(counts)
+    # freq = counts/np.sum(counts)
+    freq = counts/len(data)
     keep_items = set(unique_items[freq > frequency_threshold])
     
     items = []
