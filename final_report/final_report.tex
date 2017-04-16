@@ -12,7 +12,6 @@
 
 \maketitle
 
-
 \section{Introduction}
 \label{sec:introduction}
 
@@ -32,16 +31,16 @@ The OMDB API allows a user to specify the length of the plot summary it returns,
 
 From the Kaggle data we used the OMDB API to compile title, plot summary, and genres for all $\sim5000$ movies. The data was stored in a JSON file, with each entry (or movie) containing the fields ['title', 'plot', 'genres'].
 
-There were considerably more genres than expected, in total there were 26. Figure \ref{fig:genres} shows every genre and its percent occurrence. In our data, there were genres that occurred less than 1\% of the time, and generally they tended to be more obscure genres. Specifically, the genre 'Game-Show' occurred 0.02\% of the time. Because of the rare genres we decided to limit our genre classification labels to those that occur more often. In the end we settled on a cut of 5\% (shown by the red dotted line in Figure \ref{fig:genres}). This was to ensure that we had captured the major, or most common, genres. The cut of 5\% also allowed us to ensure that every movie had at least 1 label, or genre, associated with it. If the cut was higher, we found that some movies did not have a genre associated with it. We also wanted to avoid throwing away data. 
+There were considerably more genres than expected, in total there were 26. Figure \ref{fig:genres} shows every genre and its percent occurrence. In our data, there were genres that occurred less than 1\% of the time, and generally they tended to be more obscure genres. Specifically, the genre 'Game-Show' occurred 0.02\% of the time. Because of the rare genres we decided to limit our genre classification labels to those that occur more often. In the end we settled on a cut of 10\% (shown by the red dotted line in Figure \ref{fig:genres}). This was to ensure that we had captured the major, or most common, genres. The cut of 10\% also allowed us to ensure that every movie had at least 1 label, or genre, associated with it. If the cut was higher, we found that some movies did not have a genre associated with it. We also wanted to avoid throwing away data. 
 
 \begin{figure}[ht]
 	\centering
 		\includegraphics[width=0.75\textwidth]{genres.pdf}
-	\caption{The percent occurrence for each genre. The red dotted line represents the cut made to get the list of genres (5\%).}
+	\caption{The percent occurrence for each genre. The red dotted line represents the cut made to get the list of genres (10\%).}
 	\label{fig:genres}
 \end{figure}
 
-In the end, with our 5\% cut we ended up with the genres Action, Adventure, Comedy, Crime, Drama, Romance, and Thriller.
+In the end, with our 10\% cut we ended up with the genres Action, Adventure, Comedy, Crime, Drama, Horror, Romance, and Thriller.
 
 The genre labels set up with a one hot encoding. This was done to allow us to easily classify them with either a multi label classifier, or by individually, by column, with other classifiers (discussed further in \S \ref{sec:methods}). Figure \ref{fig:one_hot} shows the genres for every movie in the one hot encoding. A yellow line indicates the movie is associated with that genre, from this we can clearly see that a majority of the movies are associated with the 'Drama' genre.
 
@@ -85,6 +84,33 @@ Classify all genres at once.
 Topic models are methods of taking large amounts of data and finding, understanding, and summarizing the information in it \cite{wiki:topic_model, kdnuggets:topic_model}. We believe that hidden in these plot summaries there will be some fairly obvious groups of words, or topics, that will be seen together. After some on-line research we came across the concept of Latent Dirichlet Allocation (LDA) \cite{blei2003}. LDA is a fairly popular topic model. 
 
 LDA essentially looks for topics in documents, determines some topics, and gives an estimate of the proportion of that topic that is seen in the document. The general idea that documents are random mixtures of topics, and topics are characterized by words \cite{blei2003}. 
+
+% TODO
+DESCRIPTION OF LDA
+
+For this portion of the project we chose to use a the LDA routine in scikit-learn \cite{scikit-learn}. This implementation allows you to pick the number of topics you would like created and lets you tweak and set some other parameters. We chose to use the default settings for everything but the number of topics. We chose the number of topics to be equal to the number of genres. We did this to see if the words in the topics found matched with those of the genres. Below you can see the topics, by number, and the top 20 words associated with that topic.
+
+\begin{enumerate}
+\item professor king prince princess invention ma queen oil england throne bennett land lord east coast tournament royal chinese lily pakistan
+
+\item new york city family world life story school money young film lives harry team american students ray real follows mind
+
+\item earth group evil years human world alien crew planet save ship team son race los angeles help time michael new
+
+\item life man young family father old love mother woman story town year years time finds help son daughter home lives
+
+\item war police world agent murder group killer drug team american secret mission bond case man fbi detective forces government president
+
+\item alex lee danny hannah winter wilderness julie bent guide lion scam pat pearl lizzie rush hughes black hole various irving
+
+\item school friends life high friend best love new night day college big movie just sex star gets girl time party
+
+\item charlie victor darkness experiments bridge madness wallace matrix exorcism tried australia el khan horrifying andrea neo jamal melanie frankenstein trainer
+\end{enumerate}
+
+We see that some of the words in the topics are kind of ambiguous, but in some cases the topics seem to be distinguishable. For instance, in topic 5 we see words that may fit well with the topic 'Crime', and in topic 8 we see words that fit well in the 'Horror' category. In topic 4, we see words that could likely be found describing a 'Drama'.
+
+FEATURE MATRIX AND TOPICS (first 20 words?)
 
 \subsubsection{Linear Regression}
 
