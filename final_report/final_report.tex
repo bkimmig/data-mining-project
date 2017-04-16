@@ -71,17 +71,105 @@ For classification we randomly split our data into a test a train set. The test 
 \subsection{Term Frequency - Inverse Document Frequency}
 \label{sec:tfidf}
 
+To create the feature matrix we used {\it Term Frequency - Inverse Document Frequency} \href{https://en.wikipedia.org/wiki/Tf\%E2\%80\%93idf}{(TF-IDF)}, which is a similar idea to $k$-grams, but with small differences.  This looks at how frequently a term occurs in a document, in this case a movie synopsis, in combination with how frequently it occurs across all of the documents. This effectively down-weights the words that occur frequently in all documents. The term frequency is the number of times a given $k$-gram occurs in a document, and the inverse document frequency is the number of documents divided by the number of documents in which the $k$-gram occurs (the log of this is generally taken). First we create the matrix of term frequency counts represented in matrix form with $k$-grams as columns and each movie as a row. The inverse document frequency is a vector that contains the IDF for each $k$-gram. The final feature matrix is the multiplication of each TF row by the IDF vector.
+
+The next step is to get rid of common words. The first thing we did was try to eliminate stop words by just removing them from the columns of the matrix. \href{https://en.wikipedia.org/wiki/Stop_words}{Stop words} generally refer to the most common words in a language and will most likely not provide useful information in our feature matrix. However, removing stop words was not good enough, since we still had too many features.  Therefore we decided to eliminate items that did not provide good information. 
+Although, TF-IDF was able to help us with eliminating the words or $k$-grams that do not give us information by making a cut on the inverse document frequency, we decided to make the cut on just the document frequency. 
+
+To this point, we have created the TF-IDF sparse matrix using single words and cut a cut on the document frequency at 70\%. This gave us a sparse matrix of shape $5029 \times 23988$ (rows by columns) with 234,707 elements. At this point 23988 features is too many features, and most of those features might not provide any useful information, so we decided to use PCA in order to get the things that provide the most useful information. We experimented on few different number of features in order to see if there was more useful information in the data that we need to consider. We then split this data into a train and test samples, with the test portion being 40\% of the data. 
+
+%We trained the basic out of the box \href{http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html}{Random Forest Classifier} from scikit-learn. 
+
+\begin{figure}[ht]
+	\centering
+		\includegraphics[width=0.5\textwidth,height=5cm]{TF-IDF.png}
+	\caption{The feature matrix generated using TF-IDF. The rows represent each movie and the columns represent the topic number reduced to 20 features using PCA}
+	\label{fig:lda}
+\end{figure}
+
+\label{sec:tfidf}
+
 \subsubsection{Linear Regression}
 
-Classify one genre at a time.
+%Classify one genre at a time.
+In this section we used Least squares classifying one genre at a time, with TF-IDF and different features using PCA. We tested 5 values in order to see, which values gave us the best results with the least amount of features. From 20 to 500 features we can see an increasingly better average, but by increasing the features by 500 the average actually decreases. At this point we can tell that a "sweet spot" of features is right around 500.
+
+\begin{table}[h]
+	\label{tab:lr_scores}
+\begin{center}
+	\begin{tabular}{| l | l | l | l | l | l |}
+		\hline		         
+                  & PCA 20    & PCA 200           & PCA 500     & PCA 1000  & PCA 2000 \\\hline
+        Genre     & F1-Score  & F1-Score          & F1-Score    & F1-Score  & F1-Score\\\hline		
+	  	Action    & 0.45      & 0.57 			  & 0.58        & 0.56      &  0.46\\
+		Adventure & 0.37      & 0.53 			  & 0.54        & 0.53      &  0.41\\
+		Comedy    & 0.27      & 0.46 			  & 0.27        & 0.48      &  0.22\\
+		Crime     & 0.42      & 0.56 			  & 0.57        & 0.55      &  0.43\\
+		Drama     & 0.21      & 0.40 			  & 0.45        & 0.44      &  0.44\\
+		Horror    & 0.11      & 0.51 			  & 0.34        & 0.52      &  0.27\\
+		Romance   & 0.37      & 0.47 			  & 0.34        & 0.42      &  0.24\\ 
+		Thriller  & 0.08      & 0.33 			  & 0.45        & 0.37      &  0.32\\\hline
+		Average   & 0.22      & 0.40 			  & 0.43        & 0.42      &  0.35\\\hline       
+	\end{tabular} 
+\end{center}
+	\caption{Linear Regression}
+\end{table}
+
 
 \subsubsection{Logistic Regression}
 
-Classify one genre at a time.
+Another regression technique we used was \href{https://en.wikipedia.org/wiki/Logistic_regression}{Logistic Regression}. It is a regression model that has a categorical dependent variable. The dependent variable can be a binary dependent variable, or in our case where the dependent variable has more than two categories multinomial logistic regression was used. The classification was done one genre at a time as well.
+
+When we performed the same experiment as with linear regression, again there was a noticeable increase from 20 to 200, but from 500 to 2000 features the increase factor is very small, and therefore we can argue that the information on data above 500 is minimal, and we can ignore that data.
+
+With Logic regression we can see that we do better than with linear regression. 
+
+\begin{table}[h]
+	\label{tab:logr_scores}
+\begin{center}
+	\begin{tabular}{| l | l | l | l | l | l |}
+		\hline		         
+                  & PCA 20    & PCA 200           & PCA 500     & PCA 1000  & PCA 2000 \\\hline
+        Genre     & F1-Score  & F1-Score          & F1-Score    & F1-Score  & F1-Score\\\hline		
+	  	Action    & 0.58      & 0.68			  &  0.66       & 0.66     &  0.66\\
+		Adventure & 0.43      & 0.48			  &  0.52       & 0.52     &  0.51\\
+		Comedy    & 0.56      & 0.62			  &  0.63       & 0.63     &  0.63\\
+		Crime     & 0.51      & 0.58			  &  0.60       & 0.60     &  0.62\\
+		Drama     & 0.62      & 0.71			  &  0.69       & 0.71     &  0.72\\
+		Horror    & 0.33      & 0.44			  &  0.48       & 0.48     &  0.48\\
+		Romance   & 0.50      & 0.56			  &  0.59       & 0.59     &  0.59\\ 
+		Thriller  & 0.38      & 0.40			  &  0.43       & 0.43     &  0.41\\\hline
+		Average   & 0.396     & 0.452 			  & 0.469       & 0.469    &  0.47\\\hline       
+	\end{tabular} 
+\end{center}
+	\caption{Logistic Regression}
+\end{table}
+
 
 \subsubsection{Random Forest}
+Finally for this section we performed the same experiment on a \href{http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html}{Random Forest}, and we performed this classification on all genres at once. 
 
-Classify all genres at once.
+\begin{table}[h]
+	\label{tab:randf_scores}
+\begin{center}
+	\begin{tabular}{| l | l | l | l | l | l |}
+		\hline		         
+                  & PCA 20    & PCA 200           & PCA 500     & PCA 1000  & PCA 2000 \\\hline
+        Genre     & F1-Score  & F1-Score          & F1-Score    & F1-Score  & F1-Score\\\hline		
+	  	Action    & 0.30     & 0.34		          & 0.28        & 0.29      & 0.28\\
+		Adventure & 0.20     & 0.16		          & 0.19        & 0.21      & 0.23\\
+		Comedy    & 0.47     & 0.47		          & 0.47        & 0.45      & 0.45\\
+		Crime     & 0.21     & 0.29		          & 0.25        & 0.28      & 0.28\\
+		Drama     & 0.67     & 0.68		          & 0.66        & 0.66      & 0.68\\
+		Horror    & 0.13     & 0.13		          & 0.13        & 0.14      & 0.14\\
+		Romance   & 0.24     & 0.23		          & 0.30        & 0.27      & 0.27\\ 
+		Thriller  & 0.11     & 0.12		          & 0.13        & 0.10      & 0.14\\\hline
+		Average   & 0.211     & 0.215 	          & 0.216       & 0.216     & 0.223 \\\hline       
+	\end{tabular} 
+\end{center}
+	\caption{Random Forest}
+\end{table}
+
 
 \subsection{Latent Dirichlet Allocation}
 \label{sec:lda}
