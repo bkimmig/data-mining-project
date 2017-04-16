@@ -64,7 +64,7 @@ We will classify genres of movies with three different classifiers. The first wi
 
 For both the logistic regression, and random forest classifier we used the scikit-learn implementations \cite{scikit-learn}.
 
-For classification, we randomly split our data into a test a train set. The test size was 40\% of the data leaving the train with 60\%. In the following subsections we fit with the train data and check our answers with the test data. The F1-scores noted below were calculated from the test data. We would like to note that just creating a uniform random matrix of 0s and 1s gives an average score of $\sim0.3$.
+For classification, we randomly split our data into a test and a train set. The test size was 40\% of the data leaving the train with 60\%. In the following subsections we fit with the train data and check our answers with the test data. The F1-scores noted below were calculated from the test data. We would like to note that just creating a uniform random matrix of 0s and 1s gives an average score of $\sim0.3$.
 
 \subsection{Term Frequency - Inverse Document Frequency}
 \label{sec:tfidf}
@@ -92,7 +92,7 @@ To this point, we have created the TF-IDF sparse matrix using single words and a
 
 \subsubsection{Linear Regression}
 
-In this section we used Least squares classifying one genre at a time, with TF-IDF and different features using PCA. We tested 5 values in order to see, which values gave us the best results with the least amount of features. From 20 to 500 features we can see an increasingly better average, but by increasing the features by 500 the average actually decreases. At this point we can tell that a "sweet spot" of features is right around 500. Table \ref{tab:lr_scores} contains the scores for each genre based on the number of principal components used.
+In this section we used Least squares classifying one genre at a time, with TF-IDF and different features using PCA. We tested 5 values in order to see which values gave us the best results with the least amount of features. From 20 to 500 features we can see an increasingly better average, but by increasing the features by 500 the average actually decreases. At this point we can tell that a "sweet spot" of features is right around 500. Table \ref{tab:lr_scores} contains the scores for each genre based on the number of principal components used.
 
 \begin{table}[h]
 	\label{tab:lr_scores}
@@ -275,7 +275,7 @@ In this section we decided to see if we can improve our classifications by combi
 \section{Discussion}
 \label{sec:discussion}
 
-In this project we compared numerous feature creation methods and classification methods. We found that both TF-IDF and LDA useful tools for transforming textual data to structured data. In general, I think we were surprised with how much better the linear models did than the random forest; the random forest did no better than just randomly guessing. It is nice to see why these methods are so highly regarded. (We should note that the random forest may have eventually done better with classification if we did more parameter tuning, as it is highly dependent on that.)
+In this project we compared numerous feature creation methods and classification methods. We found that both TF-IDF and LDA are useful tools for transforming textual data to structured data. In general, I think we were surprised with how much better the linear models did than the random forest; the random forest did no better than just randomly guessing. It is nice to see why these methods are so highly regarded. (We should note that the random forest may have eventually done better with classification if we did more parameter tuning, as it is highly dependent on that.)
 
 There is predictive power in both the features generated using TF-IDF and LDA. It was helpful to see an improvement in prediction when combining the methods. We found that some of the hardest parts data mining and feature creation came from trying to figure out what gives good predictive power. We would be interested to see if other parameters, possibly not in the text, help us build better models. In the end we found that classifying text is a very difficult task. Even at our best we were not much better than just guessing randomly.
 
