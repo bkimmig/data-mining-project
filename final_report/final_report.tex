@@ -3,6 +3,8 @@
 \usepackage[colorlinks,urlcolor=blue]{hyperref}
 \usepackage{url}
 \usepackage{graphicx}
+\usepackage{enumitem}
+\setlist[enumerate,1]{start=0} % only outer nesting level
 
 \title{Classifying Movie Genres With Plot Summaries}
 \author{Brian Kimmig, Jesus Zarate}
@@ -35,21 +37,23 @@ There were considerably more genres than expected, in total there were 26. Figur
 
 \begin{figure}[ht]
 	\centering
-		\includegraphics[width=0.75\textwidth]{genres.pdf}
+		\includegraphics[width=0.5\textwidth,height=5cm]{genres.pdf}
 	\caption{The percent occurrence for each genre. The red dotted line represents the cut made to get the list of genres (10\%).}
 	\label{fig:genres}
 \end{figure}
 
 In the end, with our 10\% cut we ended up with the genres Action, Adventure, Comedy, Crime, Drama, Horror, Romance, and Thriller.
 
-The genre labels set up with a one hot encoding. This was done to allow us to easily classify them with either a multi label classifier, or by individually, by column, with other classifiers (discussed further in \S \ref{sec:methods}). Figure \ref{fig:one_hot} shows the genres for every movie in the one hot encoding. A yellow line indicates the movie is associated with that genre, from this we can clearly see that a majority of the movies are associated with the 'Drama' genre.
+The genre labels set up with a one hot encoding. This was done to allow us to easily classify them with either a multi label classifier, or by individually, by column, with other classifiers (discussed further in \S \ref{sec:methods}). 
 
-\begin{figure}[ht]
-	\centering
-		\includegraphics[width=0.75\textwidth]{one_hot_genres.pdf}
-	\caption{The one hot encoding of the genres for every movie. Each row represents a movie and a column represents a genre. Yellow indicates the movie has that genres associated with it.}
-	\label{fig:one_hot}
-\end{figure}
+% Figure \ref{fig:one_hot} shows the genres for every movie in the one hot encoding. A yellow line indicates the movie is associated with that genre, from this we can clearly see that a majority of the movies are associated with the 'Drama' genre.
+
+% \begin{figure}[ht]
+% 	\centering
+% 		\includegraphics[width=0.75\textwidth]{one_hot_genres.pdf}
+% 	\caption{The one hot encoding of the genres for every movie. Each row represents a movie and a column represents a genre. Yellow indicates the movie has that genres associated with it.}
+% 	\label{fig:one_hot}
+% \end{figure}
 
 The synopses of the movies live in long strings or documents. We have a list of these that we will processing to create the features that we will then use to build models to classify genres. Extracting features from these documents is the main part of the project and will be discussed \S \ref{sec:methods}.
 
@@ -62,6 +66,8 @@ We will classify genres of movies with three different classifiers. The first wi
 
 For both the logistic regression, and random forest classifier we used the scikit-learn implementations \cite{scikit-learn}.
 
+For classification we randomly split our data into a test a train set. The test size was 40\% of the data leaving the train with 60\%. In the following subsections we fit with the train data and check our answers with the test data. The F1-scores noted below were calculated from the test data. We would like to note that just creating a uniform random matrix of 0s and 1s gives an average score of $\sim0.3$.
+
 \subsection{Term Frequency - Inverse Document Frequency}
 \label{sec:tfidf}
 
@@ -73,10 +79,9 @@ Classify one genre at a time.
 
 Classify one genre at a time.
 
-\subsubsection{Random Forrest}
+\subsubsection{Random Forest}
 
 Classify all genres at once.
-
 
 \subsection{Latent Dirichlet Allocation}
 \label{sec:lda}
@@ -90,7 +95,10 @@ DESCRIPTION OF LDA
 
 For this portion of the project we chose to use a the LDA routine in scikit-learn \cite{scikit-learn}. This implementation allows you to pick the number of topics you would like created and lets you tweak and set some other parameters. We chose to use the default settings for everything but the number of topics. We chose the number of topics to be equal to the number of genres. We did this to see if the words in the topics found matched with those of the genres. Below you can see the topics, by number, and the top 20 words associated with that topic.
 
+{\small
 \begin{enumerate}
+\setlength\itemsep{0.0em}
+
 \item professor king prince princess invention ma queen oil england throne bennett land lord east coast tournament royal chinese lily pakistan
 
 \item new york city family world life story school money young film lives harry team american students ray real follows mind
@@ -107,25 +115,48 @@ For this portion of the project we chose to use a the LDA routine in scikit-lear
 
 \item charlie victor darkness experiments bridge madness wallace matrix exorcism tried australia el khan horrifying andrea neo jamal melanie frankenstein trainer
 \end{enumerate}
+}
 
-We see that some of the words in the topics are kind of ambiguous, but in some cases the topics seem to be distinguishable. For instance, in topic 5 we see words that may fit well with the topic 'Crime', and in topic 8 we see words that fit well in the 'Horror' category. In topic 4, we see words that could likely be found describing a 'Drama'.
+We see that some of the words in the topics are kind of ambiguous, but in some cases the topics seem to be distinguishable. For instance, in topic 4 we see words that may fit well with the topic 'Crime', and in topic 7 we see words that fit well in the 'Horror' category. In topic 3, we see words that could likely be found describing a 'Drama'.
 
-FEATURE MATRIX AND TOPICS (first 20 words?)
+The feature matrix obtained from LDA is very different from that of TF-IDF. Each movie gets a distribution over topics, meaning each movie has some percentage of each topic. Figure \ref{fig:lda} shows the final feature matrix that will be used to classify genres. In Figure \ref{fig:lda} there are clearly topics that are more prominent than others, specifically topic \#3.  
 
-\subsubsection{Linear Regression}
+\begin{figure}[ht]
+	\centering
+		\includegraphics[width=0.5\textwidth,height=5cm]{lda_features.pdf}
+	\caption{The feature matrix generated using LDA. The rows represent each movie and the columns represent the topic number. Each row sums to 1. The topic fraction for each movie is represented by the color. For this we specified 8 topic. We can clearly see that some topics (2, 3, 4, 6) are more prevalent than others.}
+	\label{fig:lda}
+\end{figure}
 
-\subsubsection{Logistic Regression}
+Finally, we fit the data. Table \ref{tab:lda_scores} shows the scores for every category. For this set of features both the linear regression and the logistic regression do a better job than the random forest. However, we would like to note that this could be due to poor parameter tuning on the random forest.
 
-\subsubsection{Random Forrest}
+\begin{table}[h]
+	\label{tab:lda_scores}
+\begin{center}
+	\begin{tabular}{| l | l | l | l |}
+		\hline
+		           & Linear Regression & Logistic Regression & Random Forest \\
+		Genre      & F1-Score          & F1-Score            & F1-Score       \\
+	  	\hline			
+	  	Action     & 0.58              & 0.57                & 0.42 \\
+	  	Adventure  & 0.42              & 0.42                & 0.25 \\ 
+	  	Comedy     & 0.59              & 0.54                & 0.47 \\
+	  	Crime      & 0.38              & 0.42                & 0.17 \\
+	  	Drama      & 0.67              & 0.65                & 0.57 \\
+	  	Horror     & 0.09              & 0.23                & 0.16 \\
+	  	Romance    & 0.42              & 0.41                & 0.21 \\
+	  	Thriller   & 0.28              & 0.34                & 0.19 \\
+	  	\hline
+	  	Average    & 0.43              & 0.44                & 0.30 \\
+	  \hline  
+	\end{tabular}
+\end{center}
+	\caption{The F1 scores for the prediction of each genre. The last row indicates the average. The random forest classifier, on average, does as well as guessing.}
+\end{table}
 
 \subsection{TF-IDF + LDA}
 \label{sec:tfidf_lda}
 
-\subsubsection{Linear Regression}
-
-\subsubsection{Logistic Regression}
-
-\subsubsection{Random Forrest}
 
 \section{Discussion}
 \label{sec:discussion}
