@@ -10,6 +10,12 @@ Leo Breiman.
 \newblock Random forests.
 \newblock {\em Machine Learning}, 45(1):5--32, 2001.
 
+\bibitem{chen2011}
+Edwin Chen.
+\newblock Introduction to latent dirichlet allocation, 2011.
+\newblock
+  [\url{http://blog.echen.me/2011/08/22/introduction-to-latent-dirichlet-allocation/}].
+
 \bibitem{kdnuggets:topic_model}
 IIIT-Hyderabad Goutam~Nair.
 \newblock Text mining 101: Topic modeling, 2016.
@@ -22,12 +28,6 @@ F.~Pedregosa, G.~Varoquaux, A.~Gramfort, V.~Michel, B.~Thirion, O.~Grisel,
   D.~Cournapeau, M.~Brucher, M.~Perrot, and E.~Duchesnay.
 \newblock Scikit-learn: Machine learning in {P}ython.
 \newblock {\em Journal of Machine Learning Research}, 12:2825--2830, 2011.
-
-\bibitem{wiki:genres}
-Wikipedia.
-\newblock List of genres --- wikipedia{,} the free encyclopedia, 2017.
-\newblock [Avaliable at
-  \url{https://en.wikipedia.org/w/index.php?title=List_of_genres&oldid=774783669}].
 
 \bibitem{wiki:topic_model}
 Wikipedia.

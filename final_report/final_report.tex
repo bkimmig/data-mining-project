@@ -3,6 +3,7 @@
 \usepackage[colorlinks,urlcolor=blue]{hyperref}
 \usepackage{url}
 \usepackage{graphicx}
+
 \usepackage{enumitem}
 \setlist[enumerate,1]{start=0} % only outer nesting level
 
@@ -17,13 +18,10 @@
 \section{Introduction}
 \label{sec:introduction}
 
-The internet today contains an abundance of information. We see a great deal of images, videos, and somewhat more common, text. It is common that people want to summarize a topic or the content of a chunk of text. This is a challenging problem for computers and machine learning (ML) algorithms as sentences and paragraphs are highly unstructured. A majority of ML algorithms require the data to be in a consistent form, from vectors to matrices. Furthermore, they require that the data is numerical. This poses the main problem for us, how do you meaningfully turn a sentence or paragraph into numerical data?
+The internet today contains an abundance of information. We see a great deal of images, videos, and somewhat more abundant, text. It is a common problem for people to want to summarize a topic or the content of a chunk of text. This is a challenging problem for computers and machine learning (ML) algorithms as sentences and paragraphs are highly unstructured. A majority of ML algorithms require the data to be in a consistent form, vectors and matrices. Furthermore, they require that the data is numerical. This poses the main problem for us, how do you meaningfully turn a sentence, paragraph, or chunk of text into numerical data?
 
-The goal of this project was to take text data, and assign it to a category (or categories). We could try to do this with Twitter data but the categorizing of Tweets can be largely subjective and was beyond the scope of this class. We decided that a good dataset to try these methods on would be film synopses and genres. In this case the the text describing a movie can vary greatly, but there is a consistent and widely agreed on genre categorization. This makes for a great dataset to help us see if we can categorize textual data. We aim to see if we can take the text of a film synopses, build meaningful features, and learn a model to categorize the genres of other movies based on their synopses. 
+The goal of this project was to take text data, and assign it to a category (or categories). We could try to do this with Twitter data but the categorizing of Tweets can be largely subjective and was beyond the scope of this class. We decided that a good dataset to try these methods on would be film synopses and genres. In this case the text describing a movie can vary greatly, but there is a consistent and widely agreed on genre categorization. This makes for a great dataset to help us see if we can categorize textual data. We aim to see if we can take the text of a film synopses, build meaningful features, and learn a model to categorize the genres of other movies based on their synopses. 
 
-% TODO
-Building meaningful features from text sounds nice, but what does that actually mean? Go into other stuff here? What methods are we planning on using? Point to them below?
- 
 \section{Data}
 \label{sec:data}
 
@@ -33,7 +31,7 @@ The OMDB API allows a user to specify the length of the plot summary it returns,
 
 From the Kaggle data we used the OMDB API to compile title, plot summary, and genres for all $\sim5000$ movies. The data was stored in a JSON file, with each entry (or movie) containing the fields ['title', 'plot', 'genres'].
 
-There were considerably more genres than expected, in total there were 26. Figure \ref{fig:genres} shows every genre and its percent occurrence. In our data, there were genres that occurred less than 1\% of the time, and generally they tended to be more obscure genres. Specifically, the genre 'Game-Show' occurred 0.02\% of the time. Because of the rare genres we decided to limit our genre classification labels to those that occur more often. In the end we settled on a cut of 10\% (shown by the red dotted line in Figure \ref{fig:genres}). This was to ensure that we had captured the major, or most common, genres. The cut of 10\% also allowed us to ensure that every movie had at least 1 label, or genre, associated with it. If the cut was higher, we found that some movies did not have a genre associated with it. We also wanted to avoid throwing away data. 
+There were considerably more genres than expected, in total there were 26. Figure \ref{fig:genres} shows every genre and its percent occurrence. In our data, there were genres that occurred less than 1\% of the time, and generally they tended to be more obscure genres. Specifically, the genre 'Game-Show' occurred 0.02\% of the time. Because of the rare genres we decided to limit our genre classification labels to those that occur more often. In the end we settled on a cut of 10\% (shown by the red dotted line in Figure \ref{fig:genres}). This was to ensure that we had captured the major, or most common, genres. The cut of 10\% also ensured that every movie had at least 1 label, or genre, associated with it. If the cut was higher, we found that some movies did not have a genre associated with it. We also wanted to avoid throwing away data. 
 
 \begin{figure}[ht]
 	\centering
@@ -66,17 +64,20 @@ We will classify genres of movies with three different classifiers. The first wi
 
 For both the logistic regression, and random forest classifier we used the scikit-learn implementations \cite{scikit-learn}.
 
-For classification we randomly split our data into a test a train set. The test size was 40\% of the data leaving the train with 60\%. In the following subsections we fit with the train data and check our answers with the test data. The F1-scores noted below were calculated from the test data. We would like to note that just creating a uniform random matrix of 0s and 1s gives an average score of $\sim0.3$.
+For classification, we randomly split our data into a test a train set. The test size was 40\% of the data leaving the train with 60\%. In the following subsections we fit with the train data and check our answers with the test data. The F1-scores noted below were calculated from the test data. We would like to note that just creating a uniform random matrix of 0s and 1s gives an average score of $\sim0.3$.
 
 \subsection{Term Frequency - Inverse Document Frequency}
 \label{sec:tfidf}
 
 To create the feature matrix we used {\it Term Frequency - Inverse Document Frequency} \href{https://en.wikipedia.org/wiki/Tf\%E2\%80\%93idf}{(TF-IDF)}, which is a similar idea to $k$-grams, but with small differences.  This looks at how frequently a term occurs in a document, in this case a movie synopsis, in combination with how frequently it occurs across all of the documents. This effectively down-weights the words that occur frequently in all documents. The term frequency is the number of times a given $k$-gram occurs in a document, and the inverse document frequency is the number of documents divided by the number of documents in which the $k$-gram occurs (the log of this is generally taken). First we create the matrix of term frequency counts represented in matrix form with $k$-grams as columns and each movie as a row. The inverse document frequency is a vector that contains the IDF for each $k$-gram. The final feature matrix is the multiplication of each TF row by the IDF vector.
 
-The next step is to get rid of common words. The first thing we did was try to eliminate stop words by just removing them from the columns of the matrix. \href{https://en.wikipedia.org/wiki/Stop_words}{Stop words} generally refer to the most common words in a language and will most likely not provide useful information in our feature matrix. However, removing stop words was not good enough, since we still had too many features.  Therefore we decided to eliminate items that did not provide good information. 
-Although, TF-IDF was able to help us with eliminating the words or $k$-grams that do not give us information by making a cut on the inverse document frequency, we decided to make the cut on just the document frequency. 
+The next step is to get rid of common words. The first thing we did was try to eliminate stop words by just removing them from the columns of the matrix. \href{https://en.wikipedia.org/wiki/Stop_words}{Stop words} generally refer to the most common words in a language and will most likely not provide useful information in our feature matrix. However, removing stop words was not good enough, since we still had too many features.  Therefore we decided to eliminate items that did not provide good information. We did this by making a cut on the document frequency, meaning that we didn't want words that were common in a given percentage of the documents.
 
-To this point, we have created the TF-IDF sparse matrix using single words and cut a cut on the document frequency at 70\%. This gave us a sparse matrix of shape $5029 \times 23988$ (rows by columns) with 234,707 elements. At this point 23988 features is too many features, and most of those features might not provide any useful information, so we decided to use PCA in order to get the things that provide the most useful information. We experimented on few different number of features in order to see if there was more useful information in the data that we need to consider. We then split this data into a train and test samples, with the test portion being 40\% of the data. 
+% Although, TF-IDF was able to help us with eliminating the words or $k$-grams that do not give us information by making a cut on the inverse document frequency, we decided to make the cut on just the document frequency. 
+
+To this point, we have created the TF-IDF sparse matrix using single words and a cut on the document frequency at 70\%. This gave us a sparse matrix of shape $5029 \times 23988$ (rows by columns) with 234,707 elements. At this point 23988 features is too many features, and most of those features might not provide any useful information, so we decided to use PCA in order to get the things that provide the most useful information. We experimented on few different number of features in order to see if there was more useful information in the data that we need to consider. 
+
+% We then split this data into a train and test samples, with the test portion being 40\% of the data. 
 
 %We trained the basic out of the box \href{http://scikit-learn.org/stable/modules/generated/sklearn.ensemble.RandomForestClassifier.html}{Random Forest Classifier} from scikit-learn. 
 
@@ -84,15 +85,14 @@ To this point, we have created the TF-IDF sparse matrix using single words and c
 	\centering
 		\includegraphics[width=0.5\textwidth,height=5cm]{TF-IDF.png}
 	\caption{The feature matrix generated using TF-IDF. The rows represent each movie and the columns represent the topic number reduced to 20 features using PCA}
-	\label{fig:lda}
+	\label{fig:tfidf}
 \end{figure}
 
 \label{sec:tfidf}
 
 \subsubsection{Linear Regression}
 
-%Classify one genre at a time.
-In this section we used Least squares classifying one genre at a time, with TF-IDF and different features using PCA. We tested 5 values in order to see, which values gave us the best results with the least amount of features. From 20 to 500 features we can see an increasingly better average, but by increasing the features by 500 the average actually decreases. At this point we can tell that a "sweet spot" of features is right around 500.
+In this section we used Least squares classifying one genre at a time, with TF-IDF and different features using PCA. We tested 5 values in order to see, which values gave us the best results with the least amount of features. From 20 to 500 features we can see an increasingly better average, but by increasing the features by 500 the average actually decreases. At this point we can tell that a "sweet spot" of features is right around 500. Table \ref{tab:lr_scores} contains the scores for each genre based on the number of principal components used.
 
 \begin{table}[h]
 	\label{tab:lr_scores}
@@ -112,7 +112,7 @@ In this section we used Least squares classifying one genre at a time, with TF-I
 		Average   & 0.22      & 0.40 			  & 0.43        & 0.42      &  0.35\\\hline       
 	\end{tabular} 
 \end{center}
-	\caption{Linear Regression}
+	\caption{F1-Scores for the top 20, 200, 500, 1000, 2000 principal components and Linear Regression model.}
 \end{table}
 
 
@@ -122,7 +122,7 @@ Another regression technique we used was \href{https://en.wikipedia.org/wiki/Log
 
 When we performed the same experiment as with linear regression, again there was a noticeable increase from 20 to 200, but from 500 to 2000 features the increase factor is very small, and therefore we can argue that the information on data above 500 is minimal, and we can ignore that data.
 
-With Logic regression we can see that we do better than with linear regression. 
+With Logic regression we can see that we do better than with linear regression. Table \ref{tab:logr_scores} contains the F1-Scores for varying number of principal components. 
 
 \begin{table}[h]
 	\label{tab:logr_scores}
@@ -142,7 +142,7 @@ With Logic regression we can see that we do better than with linear regression.
 		Average   & 0.396     & 0.452 			  & 0.469       & 0.469    &  0.47\\\hline       
 	\end{tabular} 
 \end{center}
-	\caption{Logistic Regression}
+	\caption{F1-Scores for the top 20, 200, 500, 1000, 2000 principal components and Logistic Regression model.}
 \end{table}
 
 
@@ -167,7 +167,7 @@ Finally for this section we performed the same experiment on a \href{http://scik
 		Average   & 0.211     & 0.215 	          & 0.216       & 0.216     & 0.223 \\\hline       
 	\end{tabular} 
 \end{center}
-	\caption{Random Forest}
+	\caption{F1-Scores for the top 20, 200, 500, 1000, 2000 principal components and Random Forest model.}
 \end{table}
 
 
@@ -178,10 +178,9 @@ Topic models are methods of taking large amounts of data and finding, understand
 
 LDA essentially looks for topics in documents, determines some topics, and gives an estimate of the proportion of that topic that is seen in the document. The general idea that documents are random mixtures of topics, and topics are characterized by words \cite{blei2003}. 
 
-% TODO
-DESCRIPTION OF LDA
+In a basic sense, LDA works by assigning random topics (the number of which is chosen by the user) to the words in each document. This gives you an initial representation of the topic distribution in each document. From there you can improve the distributions by sampling. Pick a word and a topic, then topic with probability proportional to p(topic$|$document) times p(word$|$topic) update that word to the new topic. The hope is that after some number of iterations the assignments will become stable (and something you agree with) \cite{kdnuggets:topic_model, chen2011, blei2003}. 
 
-For this portion of the project we chose to use a the LDA routine in scikit-learn \cite{scikit-learn}. This implementation allows you to pick the number of topics you would like created and lets you tweak and set some other parameters. We chose to use the default settings for everything but the number of topics. We chose the number of topics to be equal to the number of genres. We did this to see if the words in the topics found matched with those of the genres. Below you can see the topics, by number, and the top 20 words associated with that topic.
+We discovered this method later and did not have time to write a full routine for this. Therefore, we chose to use a the LDA routine in scikit-learn \cite{scikit-learn}. This implementation allows you to pick the number of topics you would like created and lets you tweak and set some other parameters. We chose to use the default settings for everything but the number of topics. We chose the number of topics to be equal to the number of genres. We did this to see if the words in the topics found matched with those of the genres. Below you can see the topics, by number, and the top 20 words associated with that topic.
 
 {\small
 \begin{enumerate}
@@ -207,7 +206,7 @@ For this portion of the project we chose to use a the LDA routine in scikit-lear
 
 We see that some of the words in the topics are kind of ambiguous, but in some cases the topics seem to be distinguishable. For instance, in topic 4 we see words that may fit well with the topic 'Crime', and in topic 7 we see words that fit well in the 'Horror' category. In topic 3, we see words that could likely be found describing a 'Drama'.
 
-The feature matrix obtained from LDA is very different from that of TF-IDF. Each movie gets a distribution over topics, meaning each movie has some percentage of each topic. Figure \ref{fig:lda} shows the final feature matrix that will be used to classify genres. In Figure \ref{fig:lda} there are clearly topics that are more prominent than others, specifically topic \#3.  
+The feature matrix obtained from LDA is very different from that of TF-IDF. Each movie gets a distribution over topics, meaning each movie has some percentage of each topic. Figure \ref{fig:lda} shows the final feature matrix that will be used to classify genres. In Figure \ref{fig:lda} there are clearly topics that are more prominent than others, specifically topic \#3. In comparison to Figure \ref{fig:tfidf} there seems to be much more coherent structure in the LDA feature matrix (Figure \ref{fig:tfidf}).
 
 \begin{figure}[ht]
 	\centering
@@ -240,7 +239,7 @@ Finally, we fit the data. Table \ref{tab:lda_scores} shows the scores for every 
 	  \hline  
 	\end{tabular}
 \end{center}
-	\caption{The F1 scores for the prediction of each genre. The last row indicates the average. The random forest classifier, on average, does as well as guessing.}
+	\caption{The F1 scores for the prediction of each genre using LDA to generate features. The last row indicates the average. The random forest classifier, on average, does as well as guessing.}
 \end{table}
 
 \subsection{TF-IDF + LDA}
@@ -270,15 +269,15 @@ In this section we decided to see if we can improve our classifications by combi
 	  \hline  
 	\end{tabular}
 \end{center}
-	\caption{The F1 scores for the prediction of each genre. The last row indicates the average. The random forest classifier, on average, does slightly worse than guessing.}
+	\caption{The F1 scores for the prediction of each genre using LDA and TF-IDF to generate features. The last row indicates the average. The random forest classifier, on average, does slightly worse than guessing.}
 \end{table}
 
 \section{Discussion}
 \label{sec:discussion}
 
-\subsection{Brian's Thoughts}
+In this project we compared numerous feature creation methods and classification methods. We found that both TF-IDF and LDA useful tools for transforming textual data to structured data. In general, I think we were surprised with how much better the linear models did than the random forest; the random forest did no better than just randomly guessing. It is nice to see why these methods are so highly regarded. (We should note that the random forest may have eventually done better with classification if we did more parameter tuning, as it is highly dependent on that.)
 
-\subsection{Chuy's Thoughts}
+There is predictive power in both the features generated using TF-IDF and LDA. It was helpful to see an improvement in prediction when combining the methods. We found that some of the hardest parts data mining and feature creation came from trying to figure out what gives good predictive power. We would be interested to see if other parameters, possibly not in the text, help us build better models. In the end we found that classifying text is a very difficult task. Even at our best we were not much better than just guessing randomly.
 
 \bibliography{bibliography}{}
 \bibliographystyle{plain}
