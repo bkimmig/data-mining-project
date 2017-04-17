@@ -136,6 +136,7 @@ Finally, we fit the data. Table \ref{tab:lda_scores} shows the scores for every 
 	\begin{tabular}{| l | l | l | l |}
 		\hline
 		           & Linear Regression & Logistic Regression & Random Forest \\
+		\hline
 		Genre      & F1-Score          & F1-Score            & F1-Score       \\
 	  	\hline			
 	  	Action     & 0.58              & 0.57                & 0.42 \\
@@ -157,6 +158,32 @@ Finally, we fit the data. Table \ref{tab:lda_scores} shows the scores for every 
 \subsection{TF-IDF + LDA}
 \label{sec:tfidf_lda}
 
+In this section we decided to see if we can improve our classifications by combining the TF-IDF features with the features from LDA. Obviously we won't want to use every feature from TF-IDF, as there can be thousands of columns, so we will use PCA to get the top 200 components. Table \ref{tab:lda_tfidf_scores} shows the scores for each genre and the average score. In general, the scores all increased with the this collection of features. 
+
+\begin{table}[h]
+	\label{tab:lda_tfidf_scores}
+\begin{center}
+	\begin{tabular}{| l | l | l | l |}
+		\hline
+		           & Linear Regression & Logistic Regression & Random Forest \\
+		\hline
+		Genre      & F1-Score          & F1-Score            & F1-Score       \\
+	  	\hline			
+	  	Action     & 0.63              & 0.63                & 0.31 \\
+	  	Adventure  & 0.55              & 0.53                & 0.17 \\ 
+	  	Comedy     & 0.62              & 0.62                & 0.40 \\
+	  	Crime      & 0.57              & 0.53                & 0.16 \\
+	  	Drama      & 0.71              & 0.69                & 0.64 \\
+	  	Horror     & 0.51              & 0.40                & 0.14 \\
+	  	Romance    & 0.53              & 0.46                & 0.06 \\
+	  	Thriller   & 0.43              & 0.43                & 0.13 \\
+	  	\hline
+	  	Average    & 0.57              & 0.54                & 0.25 \\
+	  \hline  
+	\end{tabular}
+\end{center}
+	\caption{The F1 scores for the prediction of each genre. The last row indicates the average. The random forest classifier, on average, does slightly worse than guessing.}
+\end{table}
 
 \section{Discussion}
 \label{sec:discussion}
